@@ -17,6 +17,17 @@ class Task:
     def set_priority(self, priority):
         self.priority = priority
 
+    @classmethod
+    def from_json(cls, json):
+        if not isinstance(json, dict):
+            raise TypeError("Task json must be a dictionary.")
+
+        task_name = json.get("task_name", json.get("name"))
+        task_time = json.get("task_time", json.get("time"))
+        task_priority = json.get("task_priority", json.get("priority"))
+
+        return cls(task_name, task_time, task_priority)
+
     def get_id(self)-> str:
         return self.__id
 
@@ -29,7 +40,7 @@ class Task:
 
     def __repr__(self):
         return f"Task(name='{self.task_name}', time={self.task_time})"
-
+    
 class Server:
     def __init__(self, server_name: str, server_capacity: int):
         self.__server_id = self.create_server_id()
