@@ -76,3 +76,34 @@ class Server:
     def __repr__(self):
         return f"Server(id='{self.get_server_id()}', load={self.total_load}, tasks={len(self.tasks)}, capacity={self.capacity})"
 
+class ScheduleResult:
+    def __init__(self, servers: list[Server], execution_time: float = 0.0):
+        self.servers = servers
+        self.execution_time = execution_time # Tiempo que tardó el algoritmo
+
+    @property
+    def max_load(self) -> int:
+        """Retorna el Makespan (la carga máxima entre todos los servidores)."""
+        return max((s.total_load for s in self.servers), default=0)
+
+    @property
+    def total_tasks(self) -> int:
+        return sum(len(s.tasks) for s in self.servers)
+
+    def to_json_schedule_result(self):
+        return {
+            "servers": [s.to_json_server() for s in self.servers],
+            "max_load": self.max_load,
+            "execution_time": self.execution_time,
+            "total_tasks": self.total_tasks
+        }
+
+    def __repr__(self):
+        return f"ScheduleResult(max_load={self.max_load}, servers={len(self.servers)})"
+
+    def validate(self) -> bool:
+        if not self.task_name or not self.task_time or self.task_time <= 0:
+            return False
+        if not isinstance(self.task_time, (int, float)):
+            return False
+        return True
