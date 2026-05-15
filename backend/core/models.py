@@ -15,17 +15,47 @@ class Task:
     def get_id(self)-> str:
         return self.__id
 
-    def validate(self) -> bool:
-        if not self.task_name or not self.task_time or self.task_time <= 0:
-            return False
-        if not isinstance(self.task_time, (int, float)):
-            return False
-        return True
-
-    def to_json(self) -> dict:
+    def to_json_task(self):
         return {
-            "id": self.__id,
+            "id": self.get_id(),
             "task_name": self.task_name,
             "task_time": self.task_time
         }
+
+    def __repr__(self):
+        return f"Task(name='{self.task_name}', time={self.task_time})"
+
+class Server:
+    def __init__(self, server_name: str):
+        self.__server_id = self.create_server_id()
+        self.server_name = server_name
+        self.tasks = []
+        self.total_load = 0
+
+    def __create_server_id(self) -> str:
+        return str(uuid.uuid4())
+    
+    def get_server_id(self) -> str:
+        return self.__server_id
+
+    def add_task(self, task: Task):
+        """Asigna una tarea al servidor y actualiza la carga total."""
+        self.tasks.append(task)
+        self.total_load += task.task_time
+
+    def clear(self):
+        """Limpia las tareas asignadas."""
+        self.tasks = []
+        self.total_load = 0
+
+    def to_json_server(self):
+        return {
+            "server_id": self.get_server_id(),
+            "server_name": self.server_name,
+            "tasks": [t.to_json_task() for t in self.tasks],
+            "total_load": self.total_load
+        }
+
+    def __repr__(self):
+        return f"Server(id='{self.get_server_id()}', load={self.total_load}, tasks={len(self.tasks)})"
 
