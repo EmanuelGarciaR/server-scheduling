@@ -1,0 +1,12 @@
+{
+  "description": "Caso pequeño: 3 servidores, 5 tareas",
+  "num_servers": 3,
+  "tasks": [
+    {"name": "T1", "time": 10},
+    {"name": "T2", "time": 20},
+    {"name": "T3", "time": 5},
+    {"name": "T4", "time": 15},
+    {"name": "T5", "time": 30}
+  ],
+  "expected_optimal_makespan": 30
+}

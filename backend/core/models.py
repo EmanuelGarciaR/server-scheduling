@@ -43,7 +43,7 @@ class Task:
     
 class Server:
     def __init__(self, server_name: str, server_capacity: int):
-        self.__server_id = self.create_server_id()
+        self.__server_id = self.__create_server_id()
         self.server_name = server_name
         self.tasks = []
         self.capacity = server_capacity

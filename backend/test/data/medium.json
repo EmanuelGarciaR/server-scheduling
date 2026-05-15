@@ -1,0 +1,85 @@
+{
+  "num_servers": 5,
+  "tasks": [
+    {
+      "name": "T0",
+      "time": 95
+    },
+    {
+      "name": "T1",
+      "time": 58
+    },
+    {
+      "name": "T2",
+      "time": 96
+    },
+    {
+      "name": "T3",
+      "time": 93
+    },
+    {
+      "name": "T4",
+      "time": 36
+    },
+    {
+      "name": "T5",
+      "time": 79
+    },
+    {
+      "name": "T6",
+      "time": 85
+    },
+    {
+      "name": "T7",
+      "time": 85
+    },
+    {
+      "name": "T8",
+      "time": 61
+    },
+    {
+      "name": "T9",
+      "time": 46
+    },
+    {
+      "name": "T10",
+      "time": 51
+    },
+    {
+      "name": "T11",
+      "time": 96
+    },
+    {
+      "name": "T12",
+      "time": 48
+    },
+    {
+      "name": "T13",
+      "time": 64
+    },
+    {
+      "name": "T14",
+      "time": 49
+    },
+    {
+      "name": "T15",
+      "time": 87
+    },
+    {
+      "name": "T16",
+      "time": 71
+    },
+    {
+      "name": "T17",
+      "time": 47
+    },
+    {
+      "name": "T18",
+      "time": 98
+    },
+    {
+      "name": "T19",
+      "time": 74
+    }
+  ]
+}
