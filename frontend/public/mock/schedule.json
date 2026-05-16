@@ -1,0 +1,25 @@
+{
+  "algorithm": "greedy",
+  "input": {
+    "num_servers": 3,
+    "tasks": [
+      {"name": "T1", "time": 10},
+      {"name": "T2", "time": 20}
+    ]
+  },
+  "result": {
+    "servers": [
+      {
+        "server_id": "srv-1",
+        "server_name": "Server 1",
+        "tasks": [
+          {"id": "t1", "task_name": "T1", "task_time": 10}
+        ],
+        "total_load": 10
+      }
+    ],
+    "max_load": 20,
+    "execution_time": 0.0012,
+    "total_tasks": 2
+  }
+}
