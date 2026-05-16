@@ -46,7 +46,8 @@ export interface ScheduleResponse {
     }
 
 export async function fetchSchedule(request: ScheduleRequest): Promise<ScheduleResponse> {
-    const res = await fetch('/mock/schedule.json') 
+    // TODO: reemplazar por fetch a http://localhost:8000/schedule cuando el backend esté listo
+    const res = await fetch('http://localhost:3000/mock/schedule.json')
 
     if (!res.ok) {
         throw new Error(`Failed to fetch schedule: ${res.status} ${res.statusText}`)

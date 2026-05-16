@@ -16,6 +16,14 @@
           {"id": "t1", "task_name": "T1", "task_time": 10}
         ],
         "total_load": 10
+      },
+      {
+        "server_id": "srv-2",
+        "server_name": "Server 2",
+        "tasks": [
+          {"id": "t2", "task_name": "T2", "task_time": 20}
+        ],
+        "total_load": 30
       }
     ],
     "max_load": 20,
