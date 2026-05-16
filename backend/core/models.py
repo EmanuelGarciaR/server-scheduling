@@ -1,12 +1,15 @@
 import uuid
+import statistics
 
 class Task:
-    def __init__(self, task_name, task_time, task_priority=None):
+    def __init__(self, task_name, task_time, task_priority=None, predecessor_id=None, task_id=None):
         self.task_name = task_name
         self.task_time = task_time
         self.priority = task_priority
         self.dependency = []
-        self.__id = self.__create_id()
+        self.predecessor_id = predecessor_id
+        self.dependency_level = 0
+        self.__id = task_id if task_id is not None else self.__create_id()
 
     def __str__(self):
         return f"Task: {self.task_name}, Time: {self.task_time}, ID: {self.__id}"
@@ -25,8 +28,10 @@ class Task:
         task_name = json.get("task_name", json.get("name"))
         task_time = json.get("task_time", json.get("time"))
         task_priority = json.get("task_priority", json.get("priority"))
+        predecessor_id = json.get("predecessor_id")
+        task_id = json.get("id")
 
-        return cls(task_name, task_time, task_priority)
+        return cls(task_name, task_time, task_priority, predecessor_id, task_id)
 
     def get_id(self)-> str:
         return self.__id
@@ -35,7 +40,9 @@ class Task:
         return {
             "id": self.get_id(),
             "task_name": self.task_name,
-            "task_time": self.task_time
+            "task_time": self.task_time,
+            "predecessor_id": self.predecessor_id,
+            "dependency_level": self.dependency_level
         }
 
     def __repr__(self):
@@ -98,6 +105,14 @@ class ScheduleResult:
         return max((s.total_load for s in self.servers), default=0)
 
     @property
+    def load_balancing_deviation(self) -> float:
+        """Standard deviation of the final active times of all servers."""
+        if not self.servers or len(self.servers) < 2:
+            return 0.0
+        loads = [s.total_load for s in self.servers]
+        return statistics.stdev(loads)
+
+    @property
     def total_tasks(self) -> int:
         return sum(len(s.tasks) for s in self.servers)
 
@@ -105,6 +120,7 @@ class ScheduleResult:
         return {
             "servers": [s.to_json_server() for s in self.servers],
             "max_load": self.max_load,
+            "load_balancing_deviation": self.load_balancing_deviation,
             "execution_time": self.execution_time,
             "total_tasks": self.total_tasks
         }
