@@ -2,13 +2,13 @@ import uuid
 import statistics
 
 class Task:
-    def __init__(self, task_name, task_time, task_priority=None, predecessor_id=None, task_id=None):
+    def __init__(self, task_name, task_time, task_priority=None, predecessor_id=None, task_id=None, dependency_level=0):
         self.task_name = task_name
         self.task_time = task_time
         self.priority = task_priority
         self.dependency = []
         self.predecessor_id = predecessor_id
-        self.dependency_level = 0
+        self.dependency_level = dependency_level
         self.__id = task_id if task_id is not None else self.__create_id()
 
     def __str__(self):
@@ -30,8 +30,9 @@ class Task:
         task_priority = json.get("task_priority", json.get("priority"))
         predecessor_id = json.get("predecessor_id")
         task_id = json.get("id")
+        dependency_level = json.get("dependency_level", 0)
 
-        return cls(task_name, task_time, task_priority, predecessor_id, task_id)
+        return cls(task_name, task_time, task_priority, predecessor_id, task_id, dependency_level)
 
     def get_id(self)-> str:
         return self.__id

@@ -106,18 +106,15 @@ def run_scheduler(raw_data, algorithm_name, num_servers=None):
     
     # Object Hydration
     if num_servers is None:
-        num_servers = getattr(raw_data, "num_servers", os.cpu_count() or 4)
+        # num_servers = getattr(raw_data, "num_servers", os.cpu_count() or 4)
+        num_servers = raw_data.get("num_servers", os.cpu_count() or 4)
     if isinstance(num_servers, str):
         num_servers = int(num_servers)
 
     servers = [Server(server_name=f"Server-{i+1}", server_capacity=float('inf')) for i in range(num_servers)]
     
-    tasks = []
-    for raw_task in raw_tasks:
-        t = Task.from_json(raw_task)
-        t.dependency_level = raw_task["dependency_level"]
-        tasks.append(t)
-        
+    tasks = [Task.from_json(raw_task) for raw_task in raw_tasks]
+
     # Dispatching
     algo_func = ALGORITHMS.get(algorithm_name)
     if not algo_func:
