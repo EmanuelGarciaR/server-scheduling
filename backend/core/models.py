@@ -10,6 +10,8 @@ class Task:
         self.predecessor_id = predecessor_id
         self.dependency_level = dependency_level
         self.__id = task_id if task_id is not None else self.__create_id()
+        self.start_time = 0.0
+        self.finish_time = 0.0
 
     def __str__(self):
         return f"Task: {self.task_name}, Time: {self.task_time}, ID: {self.__id}"
@@ -43,7 +45,9 @@ class Task:
             "task_name": self.task_name,
             "task_time": self.task_time,
             "predecessor_id": self.predecessor_id,
-            "dependency_level": self.dependency_level
+            "dependency_level": self.dependency_level,
+            "start_time": getattr(self, 'start_time', 0.0),
+            "finish_time": getattr(self, 'finish_time', 0.0)
         }
 
     def __repr__(self):
@@ -63,19 +67,29 @@ class Server:
     def get_server_id(self) -> str:
         return self.__server_id
 
-    def add_task(self, task: Task):
+    def add_task(self, task: Task, start_time: float = None):
         """Asigna una tarea al servidor y actualiza la carga total."""
+        if start_time is None:
+            start_time = self.total_load
+
         #Validation capacity
-        if self.capacity is not None and self.total_load + task.task_time > self.capacity:
+        if self.capacity is not None and start_time + task.task_time > self.capacity:
             raise ValueError(f"Cannot add task '{task.task_name}' to server '{self.server_name}': capacity exceeded.")
+        
+        task.start_time = start_time
+        task.finish_time = start_time + task.task_time
+
         self.tasks.append(task)
-        self.total_load += task.task_time
+        self.total_load = task.finish_time
 
     def remove_task(self, task: Task):
         """Elimina una tarea del servidor y actualiza la carga total."""
         if task in self.tasks:
             self.tasks.remove(task)
-            self.total_load -= task.task_time
+            if self.tasks:
+                self.total_load = max(t.finish_time for t in self.tasks)
+            else:
+                self.total_load = 0
         else:
             raise ValueError(f"Task '{task.task_name}' not found in server '{self.server_name}'.")
 

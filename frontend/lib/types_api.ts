@@ -5,7 +5,9 @@ export interface Task {
     id: string
     task_name: string
     task_time: number
-    }
+    start_time: number
+    finish_time: number
+}
 
 // Corresponde a Server.to_json_server()
 export interface ServerResult {

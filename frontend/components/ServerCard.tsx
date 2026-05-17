@@ -21,11 +21,9 @@ export default function ServerCard({ server, maxLoad, simulationState }: ServerC
   const isSimulating = simulationState !== undefined;
   const simTime = simulationState?.simulationTime ?? maxLoad;
 
-  let cumulativeTime = 0;
   const taskTimelines = server.tasks.map(task => {
-    const start = cumulativeTime;
-    const end = cumulativeTime + task.task_time;
-    cumulativeTime = end;
+    const start = task.start_time;
+    const end = task.finish_time;
     
     let state: 'waiting' | 'running' | 'completed' = 'waiting';
     if (!isSimulating || simTime >= end) {
@@ -37,15 +35,11 @@ export default function ServerCard({ server, maxLoad, simulationState }: ServerC
     return { ...task, start, end, state };
   });
 
-  const completedLoad = taskTimelines
-    .filter(t => t.state === 'completed')
-    .reduce((sum, t) => sum + t.task_time, 0);
-
   const runningTask = taskTimelines.find(t => t.state === 'running');
   const runningLoad = runningTask ? (simTime - runningTask.start) : 0;
   
   const remainingLoad = isSimulating 
-    ? Math.max(0, server.total_load - completedLoad - runningLoad) 
+    ? Math.max(0, server.total_load - simTime) 
     : server.total_load;
   
   const percentage = maxLoad > 0 ? Math.round((remainingLoad / maxLoad) * 100) : 0;

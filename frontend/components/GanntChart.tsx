@@ -55,11 +55,10 @@ export default function GanttChart({ servers, maxLoad }: GanttChartProps) {
                 </span>
               ) : (
                 (() => {
-                  let offset = 0
                   return server.tasks.map((task) => {
+                    // Use start_time for the horizontal position (left)
+                    const left = (task.start_time / maxLoad) * 100
                     const width = (task.task_time / maxLoad) * 100
-                    const left = offset
-                    offset += width
                     return (
                       <span
                         key={task.id}
