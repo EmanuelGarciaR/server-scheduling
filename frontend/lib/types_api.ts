@@ -28,22 +28,23 @@ export interface ScheduleRequest {
     algorithm: Algorithm
     num_servers: number
     tasks: TaskInput[]
-    }
+}
 
 // Tarea como entrada del usuario (antes de ser procesada por el backend)
 export interface TaskInput {
-    name: string
-    time: number
-    priority?: number
-    deps?: string[]   // dependencias por nombre de tarea
-    }
+    id: string
+    task_name: string
+    task_time: number
+    predecessor_id: string | null
+    task_priority: number | null
+}
 
 // Respuesta completa de la API
 export interface ScheduleResponse {
     algorithm: Algorithm
     input: ScheduleRequest
     result: ScheduleResult
-    }
+}
 
 export async function fetchSchedule(request: ScheduleRequest): Promise<ScheduleResponse> {
     // TODO: reemplazar por fetch a http://localhost:8000/schedule cuando el backend esté listo
