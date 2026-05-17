@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { TaskInput, Algorithm } from "@/lib/types_api"
+import { TaskInput, Algorithm, ScheduleResult, fetchSchedule } from "@/lib/types_api"
 import TaskCreationForm from "./TaskCreationForm"
 import AlgorithmSelector from "./AlgorithmSelector"
 
@@ -9,6 +9,10 @@ export default function SchedulingDashboard() {
   const [tasks, setTasks] = useState<TaskInput[]>([])
   const [numServers, setNumServers] = useState<number>(2)
   const [algorithm, setAlgorithm] = useState<Algorithm>("greedy")
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [result, setResult] = useState<ScheduleResult | null>(null)
 
   const handleAddTask = (task: TaskInput) => {
     setTasks((prev) => [...prev, task])
@@ -22,6 +26,25 @@ export default function SchedulingDashboard() {
     )
   }
 
+  const handleRunSchedule = async () => {
+    setIsLoading(true)
+    setError(null)
+    setResult(null)
+
+    try {
+      const data = await fetchSchedule({
+        algorithm,
+        num_servers: numServers,
+        tasks,
+      })
+      setResult(data)
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <AlgorithmSelector selected={algorithm} onSelect={setAlgorithm} />
@@ -33,6 +56,42 @@ export default function SchedulingDashboard() {
         numServers={numServers}
         onChangeNumServers={setNumServers}
       />
+
+      <section className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-5 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+              Run Scheduler
+            </h2>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+              Execute the <span className="font-semibold text-neutral-700 dark:text-neutral-300 capitalize">{algorithm.replace("_", " ")}</span> algorithm with {numServers} server{numServers > 1 ? "s" : ""} and {tasks.length} task{tasks.length !== 1 ? "s" : ""}.
+            </p>
+          </div>
+          <button
+            onClick={handleRunSchedule}
+            disabled={isLoading || tasks.length === 0}
+            className={`px-6 py-3 font-semibold rounded-lg transition-all ${
+              isLoading || tasks.length === 0
+                ? "bg-neutral-200 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-600 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg active:scale-95"
+            }`}
+          >
+            {isLoading ? "Running..." : "Run Schedule"}
+          </button>
+        </div>
+
+        {error && (
+          <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
+            <strong>Error:</strong> {error}
+          </div>
+        )}
+        
+        {result && !error && (
+          <div className="mt-4 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg text-emerald-700 dark:text-emerald-400 text-sm">
+            Success! Scheduler finished in {(result.execution_time * 1000).toFixed(2)}ms with a makespan of {result.max_load}.
+          </div>
+        )}
+      </section>
     </div>
   )
 }

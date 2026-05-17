@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from backend.core.sheduler import run_scheduler, CircularDependencyError, ValidationError
@@ -7,6 +8,14 @@ app = FastAPI(
     title="Server Scheduling API",
     description="API for scheduling tasks across multiple servers using various algorithms.",
     version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins for development, you can restrict to ["http://localhost:3000"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 class TaskInput(BaseModel):
