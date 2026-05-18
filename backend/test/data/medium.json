@@ -1,85 +1,146 @@
 {
   "num_servers": 5,
+  "expected_optimal_makespan": 176,
   "tasks": [
     {
-      "name": "T0",
-      "time": 95
+      "id": "T0",
+      "task_name": "T0",
+      "task_time": 32,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T1",
-      "time": 58
+      "id": "T1",
+      "task_name": "T1",
+      "task_time": 29,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T2",
-      "time": 96
+      "id": "T2",
+      "task_name": "T2",
+      "task_time": 18,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T3",
-      "time": 93
+      "id": "T3",
+      "task_name": "T3",
+      "task_time": 95,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T4",
-      "time": 36
+      "id": "T4",
+      "task_name": "T4",
+      "task_time": 14,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T5",
-      "time": 79
+      "id": "T5",
+      "task_name": "T5",
+      "task_time": 87,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T6",
-      "time": 85
+      "id": "T6",
+      "task_name": "T6",
+      "task_time": 95,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T7",
-      "time": 85
+      "id": "T7",
+      "task_name": "T7",
+      "task_time": 70,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T8",
-      "time": 61
+      "id": "T8",
+      "task_name": "T8",
+      "task_time": 12,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T9",
-      "time": 46
+      "id": "T9",
+      "task_name": "T9",
+      "task_time": 76,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T10",
-      "time": 51
+      "id": "T10",
+      "task_name": "T10",
+      "task_time": 55,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T11",
-      "time": 96
+      "id": "T11",
+      "task_name": "T11",
+      "task_time": 5,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T12",
-      "time": 48
+      "id": "T12",
+      "task_name": "T12",
+      "task_time": 4,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T13",
-      "time": 64
+      "id": "T13",
+      "task_name": "T13",
+      "task_time": 12,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T14",
-      "time": 49
+      "id": "T14",
+      "task_name": "T14",
+      "task_time": 28,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T15",
-      "time": 87
+      "id": "T15",
+      "task_name": "T15",
+      "task_time": 30,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T16",
-      "time": 71
+      "id": "T16",
+      "task_name": "T16",
+      "task_time": 65,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T17",
-      "time": 47
+      "id": "T17",
+      "task_name": "T17",
+      "task_time": 78,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T18",
-      "time": 98
+      "id": "T18",
+      "task_name": "T18",
+      "task_time": 4,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T19",
-      "time": 74
+      "id": "T19",
+      "task_name": "T19",
+      "task_time": 72,
+      "predecessor_id": null,
+      "task_priority": null
     }
   ]
 }

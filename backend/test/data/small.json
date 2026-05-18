@@ -1,12 +1,41 @@
 {
-  "description": "Caso pequeño: 3 servidores, 5 tareas",
   "num_servers": 3,
+  "expected_optimal_makespan": 24,
   "tasks": [
-    {"name": "T1", "time": 10},
-    {"name": "T2", "time": 20},
-    {"name": "T3", "time": 5},
-    {"name": "T4", "time": 15},
-    {"name": "T5", "time": 30}
-  ],
-  "expected_optimal_makespan": 30
+    {
+      "id": "T0",
+      "task_name": "T0",
+      "task_time": 21,
+      "predecessor_id": null,
+      "task_priority": null
+    },
+    {
+      "id": "T1",
+      "task_name": "T1",
+      "task_time": 4,
+      "predecessor_id": null,
+      "task_priority": null
+    },
+    {
+      "id": "T2",
+      "task_name": "T2",
+      "task_time": 1,
+      "predecessor_id": null,
+      "task_priority": null
+    },
+    {
+      "id": "T3",
+      "task_name": "T3",
+      "task_time": 24,
+      "predecessor_id": null,
+      "task_priority": null
+    },
+    {
+      "id": "T4",
+      "task_name": "T4",
+      "task_time": 9,
+      "predecessor_id": null,
+      "task_priority": null
+    }
+  ]
 }

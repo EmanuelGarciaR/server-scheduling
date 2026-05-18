@@ -1,405 +1,706 @@
 {
   "num_servers": 10,
+  "expected_optimal_makespan": 511,
   "tasks": [
     {
-      "name": "T0",
-      "time": 26
+      "id": "T0",
+      "task_name": "T0",
+      "task_time": 26,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T1",
-      "time": 26
+      "id": "T1",
+      "task_name": "T1",
+      "task_time": 92,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T2",
-      "time": 41
+      "id": "T2",
+      "task_name": "T2",
+      "task_time": 84,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T3",
-      "time": 7
+      "id": "T3",
+      "task_name": "T3",
+      "task_time": 90,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T4",
-      "time": 5
+      "id": "T4",
+      "task_name": "T4",
+      "task_time": 70,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T5",
-      "time": 1
+      "id": "T5",
+      "task_name": "T5",
+      "task_time": 54,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T6",
-      "time": 79
+      "id": "T6",
+      "task_name": "T6",
+      "task_time": 29,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T7",
-      "time": 87
+      "id": "T7",
+      "task_name": "T7",
+      "task_time": 58,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T8",
-      "time": 57
+      "id": "T8",
+      "task_name": "T8",
+      "task_time": 76,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T9",
-      "time": 53
+      "id": "T9",
+      "task_name": "T9",
+      "task_time": 36,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T10",
-      "time": 19
+      "id": "T10",
+      "task_name": "T10",
+      "task_time": 1,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T11",
-      "time": 20
+      "id": "T11",
+      "task_name": "T11",
+      "task_time": 98,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T12",
-      "time": 48
+      "id": "T12",
+      "task_name": "T12",
+      "task_time": 21,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T13",
-      "time": 80
+      "id": "T13",
+      "task_name": "T13",
+      "task_time": 90,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T14",
-      "time": 68
+      "id": "T14",
+      "task_name": "T14",
+      "task_time": 55,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T15",
-      "time": 56
+      "id": "T15",
+      "task_name": "T15",
+      "task_time": 44,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T16",
-      "time": 21
+      "id": "T16",
+      "task_name": "T16",
+      "task_time": 36,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T17",
-      "time": 39
+      "id": "T17",
+      "task_name": "T17",
+      "task_time": 20,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T18",
-      "time": 2
+      "id": "T18",
+      "task_name": "T18",
+      "task_time": 28,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T19",
-      "time": 14
+      "id": "T19",
+      "task_name": "T19",
+      "task_time": 98,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T20",
-      "time": 63
+      "id": "T20",
+      "task_name": "T20",
+      "task_time": 44,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T21",
-      "time": 31
+      "id": "T21",
+      "task_name": "T21",
+      "task_time": 14,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T22",
-      "time": 97
+      "id": "T22",
+      "task_name": "T22",
+      "task_time": 12,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T23",
-      "time": 90
+      "id": "T23",
+      "task_name": "T23",
+      "task_time": 49,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T24",
-      "time": 77
+      "id": "T24",
+      "task_name": "T24",
+      "task_time": 13,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T25",
-      "time": 56
+      "id": "T25",
+      "task_name": "T25",
+      "task_time": 46,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T26",
-      "time": 74
+      "id": "T26",
+      "task_name": "T26",
+      "task_time": 45,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T27",
-      "time": 20
+      "id": "T27",
+      "task_name": "T27",
+      "task_time": 78,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T28",
-      "time": 1
+      "id": "T28",
+      "task_name": "T28",
+      "task_time": 34,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T29",
-      "time": 56
+      "id": "T29",
+      "task_name": "T29",
+      "task_time": 6,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T30",
-      "time": 68
+      "id": "T30",
+      "task_name": "T30",
+      "task_time": 94,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T31",
-      "time": 45
+      "id": "T31",
+      "task_name": "T31",
+      "task_time": 59,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T32",
-      "time": 37
+      "id": "T32",
+      "task_name": "T32",
+      "task_time": 69,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T33",
-      "time": 68
+      "id": "T33",
+      "task_name": "T33",
+      "task_time": 16,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T34",
-      "time": 77
+      "id": "T34",
+      "task_name": "T34",
+      "task_time": 49,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T35",
-      "time": 27
+      "id": "T35",
+      "task_name": "T35",
+      "task_time": 11,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T36",
-      "time": 59
+      "id": "T36",
+      "task_name": "T36",
+      "task_time": 71,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T37",
-      "time": 8
+      "id": "T37",
+      "task_name": "T37",
+      "task_time": 38,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T38",
-      "time": 31
+      "id": "T38",
+      "task_name": "T38",
+      "task_time": 81,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T39",
-      "time": 18
+      "id": "T39",
+      "task_name": "T39",
+      "task_time": 80,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T40",
-      "time": 14
+      "id": "T40",
+      "task_name": "T40",
+      "task_time": 47,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T41",
-      "time": 63
+      "id": "T41",
+      "task_name": "T41",
+      "task_time": 74,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T42",
-      "time": 88
+      "id": "T42",
+      "task_name": "T42",
+      "task_time": 25,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T43",
-      "time": 21
+      "id": "T43",
+      "task_name": "T43",
+      "task_time": 91,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T44",
-      "time": 58
+      "id": "T44",
+      "task_name": "T44",
+      "task_time": 9,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T45",
-      "time": 33
+      "id": "T45",
+      "task_name": "T45",
+      "task_time": 6,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T46",
-      "time": 64
+      "id": "T46",
+      "task_name": "T46",
+      "task_time": 85,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T47",
-      "time": 81
+      "id": "T47",
+      "task_name": "T47",
+      "task_time": 30,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T48",
-      "time": 9
+      "id": "T48",
+      "task_name": "T48",
+      "task_time": 99,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T49",
-      "time": 19
+      "id": "T49",
+      "task_name": "T49",
+      "task_time": 38,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T50",
-      "time": 57
+      "id": "T50",
+      "task_name": "T50",
+      "task_time": 11,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T51",
-      "time": 16
+      "id": "T51",
+      "task_name": "T51",
+      "task_time": 30,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T52",
-      "time": 37
+      "id": "T52",
+      "task_name": "T52",
+      "task_time": 13,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T53",
-      "time": 59
+      "id": "T53",
+      "task_name": "T53",
+      "task_time": 49,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T54",
-      "time": 61
+      "id": "T54",
+      "task_name": "T54",
+      "task_time": 36,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T55",
-      "time": 69
+      "id": "T55",
+      "task_name": "T55",
+      "task_time": 59,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T56",
-      "time": 6
+      "id": "T56",
+      "task_name": "T56",
+      "task_time": 82,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T57",
-      "time": 1
+      "id": "T57",
+      "task_name": "T57",
+      "task_time": 47,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T58",
-      "time": 74
+      "id": "T58",
+      "task_name": "T58",
+      "task_time": 21,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T59",
-      "time": 88
+      "id": "T59",
+      "task_name": "T59",
+      "task_time": 48,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T60",
-      "time": 66
+      "id": "T60",
+      "task_name": "T60",
+      "task_time": 46,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T61",
-      "time": 73
+      "id": "T61",
+      "task_name": "T61",
+      "task_time": 27,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T62",
-      "time": 71
+      "id": "T62",
+      "task_name": "T62",
+      "task_time": 86,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T63",
-      "time": 67
+      "id": "T63",
+      "task_name": "T63",
+      "task_time": 35,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T64",
-      "time": 27
+      "id": "T64",
+      "task_name": "T64",
+      "task_time": 90,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T65",
-      "time": 97
+      "id": "T65",
+      "task_name": "T65",
+      "task_time": 88,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T66",
-      "time": 63
+      "id": "T66",
+      "task_name": "T66",
+      "task_time": 83,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T67",
-      "time": 17
+      "id": "T67",
+      "task_name": "T67",
+      "task_time": 10,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T68",
-      "time": 13
+      "id": "T68",
+      "task_name": "T68",
+      "task_time": 78,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T69",
-      "time": 76
+      "id": "T69",
+      "task_name": "T69",
+      "task_time": 82,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T70",
-      "time": 16
+      "id": "T70",
+      "task_name": "T70",
+      "task_time": 22,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T71",
-      "time": 57
+      "id": "T71",
+      "task_name": "T71",
+      "task_time": 69,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T72",
-      "time": 48
+      "id": "T72",
+      "task_name": "T72",
+      "task_time": 94,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T73",
-      "time": 70
+      "id": "T73",
+      "task_name": "T73",
+      "task_time": 32,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T74",
-      "time": 60
+      "id": "T74",
+      "task_name": "T74",
+      "task_time": 21,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T75",
-      "time": 83
+      "id": "T75",
+      "task_name": "T75",
+      "task_time": 60,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T76",
-      "time": 11
+      "id": "T76",
+      "task_name": "T76",
+      "task_time": 49,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T77",
-      "time": 49
+      "id": "T77",
+      "task_name": "T77",
+      "task_time": 35,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T78",
-      "time": 36
+      "id": "T78",
+      "task_name": "T78",
+      "task_time": 82,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T79",
-      "time": 19
+      "id": "T79",
+      "task_name": "T79",
+      "task_time": 89,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T80",
-      "time": 22
+      "id": "T80",
+      "task_name": "T80",
+      "task_time": 72,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T81",
-      "time": 78
+      "id": "T81",
+      "task_name": "T81",
+      "task_time": 29,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T82",
-      "time": 33
+      "id": "T82",
+      "task_name": "T82",
+      "task_time": 88,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T83",
-      "time": 36
+      "id": "T83",
+      "task_name": "T83",
+      "task_time": 42,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T84",
-      "time": 34
+      "id": "T84",
+      "task_name": "T84",
+      "task_time": 99,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T85",
-      "time": 33
+      "id": "T85",
+      "task_name": "T85",
+      "task_time": 100,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T86",
-      "time": 98
+      "id": "T86",
+      "task_name": "T86",
+      "task_time": 8,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T87",
-      "time": 26
+      "id": "T87",
+      "task_name": "T87",
+      "task_time": 30,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T88",
-      "time": 37
+      "id": "T88",
+      "task_name": "T88",
+      "task_time": 5,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T89",
-      "time": 87
+      "id": "T89",
+      "task_name": "T89",
+      "task_time": 41,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T90",
-      "time": 98
+      "id": "T90",
+      "task_name": "T90",
+      "task_time": 52,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T91",
-      "time": 100
+      "id": "T91",
+      "task_name": "T91",
+      "task_time": 35,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T92",
-      "time": 82
+      "id": "T92",
+      "task_name": "T92",
+      "task_time": 9,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T93",
-      "time": 11
+      "id": "T93",
+      "task_name": "T93",
+      "task_time": 28,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T94",
-      "time": 75
+      "id": "T94",
+      "task_name": "T94",
+      "task_time": 73,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T95",
-      "time": 65
+      "id": "T95",
+      "task_name": "T95",
+      "task_time": 92,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T96",
-      "time": 74
+      "id": "T96",
+      "task_name": "T96",
+      "task_time": 41,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T97",
-      "time": 53
+      "id": "T97",
+      "task_name": "T97",
+      "task_time": 28,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T98",
-      "time": 10
+      "id": "T98",
+      "task_name": "T98",
+      "task_time": 84,
+      "predecessor_id": null,
+      "task_priority": null
     },
     {
-      "name": "T99",
-      "time": 79
+      "id": "T99",
+      "task_name": "T99",
+      "task_time": 64,
+      "predecessor_id": null,
+      "task_priority": null
     }
   ]
 }
