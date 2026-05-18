@@ -14,7 +14,7 @@ def load_json_data():
             data = json.load(f)
         
         # Convertimos la lista de tareas en objetos Task
-        data["tasks_objects"] = [Task(t["name"], t["time"]) for t in data["tasks"]]
+        data["tasks_objects"] = [Task.from_json(t) for t in data["tasks"]]
         return data
     return _load
 
