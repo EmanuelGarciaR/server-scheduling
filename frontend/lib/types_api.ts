@@ -7,6 +7,7 @@ export interface Task {
     task_time: number
     start_time: number
     finish_time: number
+    predecessor_id: string | null
 }
 
 // Corresponde a Server.to_json_server()
@@ -15,7 +16,7 @@ export interface ServerResult {
     server_name: string
     tasks: Task[]
     total_load: number
-    }
+}
 
 // Corresponde a ScheduleResult.to_json_schedule_result()
 export interface ScheduleResult {
@@ -23,7 +24,7 @@ export interface ScheduleResult {
     max_load: number
     execution_time: number
     total_tasks: number
-    }
+}
 
 // Lo que envías al backend
 export interface ScheduleRequest {
@@ -62,7 +63,7 @@ export async function fetchSchedule(request: ScheduleRequest): Promise<ScheduleR
         const errorMessage = errorData?.detail || `Error: ${res.status} ${res.statusText}`
         throw new Error(errorMessage)
     }
-    
+
     const data: ScheduleResult = await res.json()
     return data
 }

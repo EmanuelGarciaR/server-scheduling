@@ -1,8 +1,8 @@
 import { ServerResult } from '@/lib/types_api'
 
 interface GanttChartProps {
-    servers: ServerResult[]
-    maxLoad: number
+  servers: ServerResult[]
+  maxLoad: number
 }
 
 const TASK_COLORS = [
@@ -59,15 +59,34 @@ export default function GanttChart({ servers, maxLoad }: GanttChartProps) {
                     // Use start_time for the horizontal position (left)
                     const left = (task.start_time / maxLoad) * 100
                     const width = (task.task_time / maxLoad) * 100
+
+                    // gap antes de esta tarea (tiempo de espera por dependencia)
+                    const prevTask = server.tasks.find(t => t.finish_time === task.start_time)
+                    const gapStart = prevTask ? (prevTask.finish_time / maxLoad) * 100 : 0
+                    const gapWidth = left - gapStart
                     return (
-                      <span
-                        key={task.id}
-                        title={`${task.task_name} — ${task.task_time}u`}
-                        className={`absolute top-0 h-full flex items-center justify-center text-xs font-medium rounded-md ${taskColorMap[task.task_name]}`}
-                        style={{ left: `${left}%`, width: `${width}%` }}
-                      >
-                        {width > 8 ? task.task_name : ''}
-                      </span>
+                      <>
+                        {gapWidth > 0 && (
+                          <span
+                            key={`gap-${task.id}`}
+                            className="absolute top-0 h-full"
+                            style={{
+                              left: `${gapStart}%`,
+                              width: `${gapWidth}%`,
+                              background: 'repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(150,150,150,0.15) 4px, rgba(150,150,150,0.15) 8px)'
+                            }}
+                            title={`Esperando predecesor: ${gapWidth.toFixed(1)}u`}
+                          />
+                        )}
+                        <span
+                          key={task.id}
+                          title={`${task.task_name} — inicio: ${task.start_time}, duración: ${task.task_time}u`}
+                          className={`absolute top-0 h-full flex items-center justify-center text-xs font-medium rounded-md ${taskColorMap[task.task_name]}`}
+                          style={{ left: `${left}%`, width: `${width}%` }}
+                        >
+                          {width > 8 ? task.task_name : ''}
+                        </span>
+                      </>
                     )
                   })
                 })()
