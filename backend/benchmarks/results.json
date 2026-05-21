@@ -1,0 +1,137 @@
+[
+    {
+        "algorithm": "greedy",
+        "case": "small",
+        "n_tasks": 5,
+        "num_servers": 3,
+        "makespan": 25,
+        "avg_execution_time": 2.0780041813850404e-05,
+        "is_optimal": false
+    },
+    {
+        "algorithm": "backtracking",
+        "case": "small",
+        "n_tasks": 5,
+        "num_servers": 3,
+        "makespan": 24,
+        "avg_execution_time": 0.00012217992916703225,
+        "is_optimal": true
+    },
+    {
+        "algorithm": "brute_force",
+        "case": "small",
+        "n_tasks": 5,
+        "num_servers": 3,
+        "makespan": 24,
+        "avg_execution_time": 0.001931580062955618,
+        "is_optimal": true
+    },
+    {
+        "algorithm": "divide_conquer",
+        "case": "small",
+        "n_tasks": 5,
+        "num_servers": 3,
+        "makespan": 25,
+        "avg_execution_time": 5.345996469259262e-05,
+        "is_optimal": false
+    },
+    {
+        "algorithm": "recursive",
+        "case": "small",
+        "n_tasks": 5,
+        "num_servers": 3,
+        "makespan": 24,
+        "avg_execution_time": 0.0016080200672149657,
+        "is_optimal": true
+    },
+    {
+        "algorithm": "greedy",
+        "case": "medium",
+        "n_tasks": 20,
+        "num_servers": 5,
+        "makespan": 209,
+        "avg_execution_time": 8.194008842110634e-05,
+        "is_optimal": false
+    },
+    {
+        "algorithm": "backtracking",
+        "case": "medium",
+        "n_tasks": 20,
+        "num_servers": 5,
+        "makespan": null,
+        "avg_execution_time": null,
+        "is_optimal": false
+    },
+    {
+        "algorithm": "brute_force",
+        "case": "medium",
+        "n_tasks": 20,
+        "num_servers": 5,
+        "makespan": null,
+        "avg_execution_time": null,
+        "is_optimal": false
+    },
+    {
+        "algorithm": "divide_conquer",
+        "case": "medium",
+        "n_tasks": 20,
+        "num_servers": 5,
+        "makespan": 209,
+        "avg_execution_time": 0.00010810000821948051,
+        "is_optimal": false
+    },
+    {
+        "algorithm": "recursive",
+        "case": "medium",
+        "n_tasks": 20,
+        "num_servers": 5,
+        "makespan": null,
+        "avg_execution_time": null,
+        "is_optimal": false
+    },
+    {
+        "algorithm": "greedy",
+        "case": "large",
+        "n_tasks": 100,
+        "num_servers": 10,
+        "makespan": 552,
+        "avg_execution_time": 0.0005369400605559349,
+        "is_optimal": false
+    },
+    {
+        "algorithm": "backtracking",
+        "case": "large",
+        "n_tasks": 100,
+        "num_servers": 10,
+        "makespan": null,
+        "avg_execution_time": null,
+        "is_optimal": false
+    },
+    {
+        "algorithm": "brute_force",
+        "case": "large",
+        "n_tasks": 100,
+        "num_servers": 10,
+        "makespan": null,
+        "avg_execution_time": null,
+        "is_optimal": false
+    },
+    {
+        "algorithm": "divide_conquer",
+        "case": "large",
+        "n_tasks": 100,
+        "num_servers": 10,
+        "makespan": 552,
+        "avg_execution_time": 0.0008845599368214607,
+        "is_optimal": false
+    },
+    {
+        "algorithm": "recursive",
+        "case": "large",
+        "n_tasks": 100,
+        "num_servers": 10,
+        "makespan": null,
+        "avg_execution_time": null,
+        "is_optimal": false
+    }
+]
