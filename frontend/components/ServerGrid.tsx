@@ -1,4 +1,4 @@
-import { ScheduleResult } from '@/lib/types_api'
+import { ScheduleResult, Task } from '@/lib/types_api'
 import ServerCard from './ServerCard'
 import { SimulationState } from '../hooks/useSimulation'
 

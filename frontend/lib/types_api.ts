@@ -50,7 +50,9 @@ export interface ScheduleResponse {
 }
 
 export async function fetchSchedule(request: ScheduleRequest): Promise<ScheduleResult> {
-    const res = await fetch('http://localhost:8000/schedule', {
+    const base = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:8000'
+
+    const res = await fetch(`${base}/schedule`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
