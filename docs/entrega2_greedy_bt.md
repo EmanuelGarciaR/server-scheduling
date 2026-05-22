@@ -73,7 +73,7 @@ Al igual que el algoritmo recursivo puro, intenta colocar secuencialmente la tar
 
 La siguiente tabla resume los resultados empíricos obtenidos de `results.json` para los primeros 4 algoritmos:
 
-| Técnica | Complejidad Temporal | Complejidad Espacial | ¿Óptima? | Tiempo `small` (n=5) | Tiempo `medium` (n=20) |
+| Técnica | Complejidad Temporal | Complejidad Espacial | ¿Makespan óptimo? | Tiempo `small` (n=5) | Tiempo `medium` (n=20) |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Fuerza Bruta** | $O(m^n \cdot n)$ | $O(n)$ | Sí | $\approx 0.00193$ s | TIMEOUT |
 | **Recursiva** | $O(m^n)$ | $O(n)$ | Sí | $\approx 0.00160$ s | TIMEOUT |

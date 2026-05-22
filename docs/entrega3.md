@@ -77,7 +77,7 @@ Sin embargo, recordemos que antes de iniciar la recursión se realiza un `sorted
 
 Utilizando los datos consolidados en `results.json` con la prueba `medium` (n=20) y `large` (n=100), obtenemos la siguiente perspectiva sobre la escalabilidad de cada técnica.
 
-| Técnica | Complejidad Temporal | Complejidad Espacial | ¿Óptima? | Tiempo n=20 | Tiempo n=100 |
+| Técnica | Complejidad Temporal | Complejidad Espacial | ¿Makespan óptimo? | Tiempo n=20 | Tiempo n=100 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Fuerza Bruta** | $O(m^n \cdot n)$ | $O(n)$ | Sí | TIMEOUT | TIMEOUT |
 | **Recursiva** | $O(m^n)$ | $O(n)$ | Sí | TIMEOUT | TIMEOUT |

@@ -116,9 +116,9 @@ La solución implementada en `backend/algorithms/recursive.py` realiza la misma 
 ### Tabla Comparativa: Fuerza Bruta vs Recursiva
 Basado en las mediciones empíricas de `results.json`:
 
-| Algoritmo | Tiempo `small` (n=5) | Tiempo `medium` (n=20) | ¿Óptimo (Makespan=24)? |
+| Algoritmo | Tiempo `small` (n=5) | Tiempo `medium` (n=20) | ¿Makespan óptimo? |
 | :--- | :--- | :--- | :--- |
 | Fuerza Bruta | ~0.001932 s | TIMEOUT | Sí (24) |
 | Recursivo | ~0.001608 s | TIMEOUT | Sí (24) |
 
-*Ambos logran garantizar matemáticamente la respuesta óptima, pero sufren del mismo explosión combinatoria. La versión recursiva fue fraccionalmente más rápida en Python para el set `small` debido a que evita regenerar completamente el estado desde cero en cada validación.*
+*Ambos logran garantizar matemáticamente la respuesta makespan óptimo, pero sufren del mismo explosión combinatoria. La versión recursiva fue fraccionalmente más rápida en Python para el set `small` debido a que evita regenerar completamente el estado desde cero en cada validación.*
