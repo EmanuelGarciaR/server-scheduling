@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Server Scheduling — Visualizador Interactivo</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --card: #1a1a26;
+    --border: #2a2a3e;
+    --accent1: #7c3aed;
+    --accent2: #06b6d4;
+    --accent3: #f59e0b;
+    --accent4: #10b981;
+    --accent5: #ef4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; overflow-x: hidden; }
+
+  /* HEADER */
+  header {
+    padding: 2rem 2rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #0a0a0f 0%, #12071e 100%);
+  }
+  header h1 { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 800; letter-spacing: -0.03em; }
+  header h1 span { color: var(--accent1); }
+  header p { color: var(--muted); font-size: .85rem; margin-top: .3rem; font-family: var(--mono); }
+
+  /* TABS */
+  .tabs { display: flex; gap: .5rem; padding: 1rem 2rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .tab {
+    padding: .5rem 1.2rem; border-radius: 6px; cursor: pointer; font-family: var(--mono);
+    font-size: .78rem; font-weight: 700; border: 1px solid var(--border);
+    background: var(--surface); color: var(--muted); transition: all .2s;
+    letter-spacing: .04em; text-transform: uppercase;
+  }
+  .tab.active { background: var(--accent1); color: #fff; border-color: var(--accent1); }
+  .tab:hover:not(.active) { border-color: var(--accent1); color: var(--text); }
+
+  /* PANELS */
+  .panel { display: none; padding: 1.5rem 2rem; }
+  .panel.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.5rem; margin-bottom: 1.2rem;
+  }
+  .card h2 { font-size: 1.1rem; font-weight: 800; margin-bottom: .8rem; letter-spacing: -.02em; }
+  .card p { font-size: .88rem; color: var(--muted); line-height: 1.65; }
+  .card p + p { margin-top: .6rem; }
+
+  /* TWO COL */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  @media(max-width:700px){ .two-col { grid-template-columns: 1fr; } }
+
+  /* HIGHLIGHT BOXES */
+  .highlight {
+    border-left: 3px solid var(--accent1);
+    padding: .6rem 1rem; margin: .8rem 0;
+    background: rgba(124,58,237,.08); border-radius: 0 6px 6px 0;
+    font-size: .85rem; font-family: var(--mono); line-height: 1.6;
+  }
+  .highlight.cyan { border-color: var(--accent2); background: rgba(6,182,212,.08); }
+  .highlight.amber { border-color: var(--accent3); background: rgba(245,158,11,.08); }
+  .highlight.green { border-color: var(--accent4); background: rgba(16,185,129,.08); }
+  .highlight.red   { border-color: var(--accent5); background: rgba(239,68,68,.08); }
+
+  /* CODE */
+  pre {
+    background: #07070d; border: 1px solid var(--border); border-radius: 8px;
+    padding: 1rem; font-family: var(--mono); font-size: .78rem; line-height: 1.7;
+    overflow-x: auto; color: #a5f3fc; white-space: pre-wrap;
+  }
+  .kw { color: #c084fc; } .fn { color: #fbbf24; } .cm { color: #475569; }
+  .str { color: #86efac; } .num { color: #f9a8d4; }
+
+  /* CONTROLS */
+  .controls { display: flex; gap: .7rem; flex-wrap: wrap; align-items: center; margin-bottom: 1rem; }
+  button {
+    padding: .45rem 1rem; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text); cursor: pointer;
+    font-family: var(--mono); font-size: .78rem; font-weight: 700;
+    transition: all .15s; letter-spacing: .04em;
+  }
+  button:hover { background: var(--accent1); border-color: var(--accent1); color: #fff; }
+  button.run { background: var(--accent1); border-color: var(--accent1); color: #fff; }
+  button.run:hover { background: #6d28d9; }
+  button.step { background: var(--accent2); border-color: var(--accent2); color: #000; }
+  button.step:hover { background: #0891b2; }
+
+  label { font-size: .8rem; color: var(--muted); font-family: var(--mono); }
+  input[type=range] { accent-color: var(--accent1); width: 100px; }
+  select {
+    padding: .4rem .8rem; border-radius: 6px; background: var(--surface);
+    border: 1px solid var(--border); color: var(--text);
+    font-family: var(--mono); font-size: .78rem;
+  }
+
+  /* ANIMATION SPEED */
+  .speed-label { font-size: .75rem; color: var(--muted); font-family: var(--mono); }
+
+  /* DEPENDENCY VIZ */
+  .dep-viz { overflow-x: auto; }
+  .dep-level { display: flex; gap: .8rem; margin-bottom: .5rem; align-items: center; flex-wrap: wrap; }
+  .dep-level-label {
+    font-size: .7rem; color: var(--muted); font-family: var(--mono);
+    width: 80px; flex-shrink: 0; text-align: right;
+  }
+  .task-chip {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .35rem .8rem; border-radius: 20px; font-family: var(--mono);
+    font-size: .75rem; font-weight: 700; border: 1.5px solid; transition: all .3s;
+  }
+  .task-chip.l0 { border-color: var(--accent4); color: var(--accent4); background: rgba(16,185,129,.08); }
+  .task-chip.l1 { border-color: var(--accent2); color: var(--accent2); background: rgba(6,182,212,.08); }
+  .task-chip.l2 { border-color: var(--accent3); color: var(--accent3); background: rgba(245,158,11,.08); }
+  .task-chip.l3 { border-color: var(--accent1); color: var(--accent1); background: rgba(124,58,237,.08); }
+  .arrow { color: var(--muted); font-size: .8rem; }
+  .task-chip.highlight-task { animation: pulse-chip .5s ease; }
+  @keyframes pulse-chip { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+
+  /* RECURSION TREE */
+  #tree-container {
+    overflow: auto; background: #07070d; border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.2rem; min-height: 200px;
+    font-family: var(--mono); font-size: .78rem;
+  }
+  .tree-node {
+    display: inline-block; padding: .3rem .7rem; border-radius: 6px;
+    margin: .15rem; transition: all .3s; border: 1px solid transparent;
+    font-size: .72rem; vertical-align: middle;
+  }
+  .tree-node.pending  { background: #1a1a26; border-color: var(--border); color: var(--muted); }
+  .tree-node.active   { background: rgba(124,58,237,.3); border-color: var(--accent1); color: #c084fc; }
+  .tree-node.done     { background: rgba(16,185,129,.15); border-color: var(--accent4); color: var(--accent4); }
+  .tree-node.base     { background: rgba(245,158,11,.15); border-color: var(--accent3); color: var(--accent3); font-weight: 700; }
+  .tree-level { margin: .4rem 0; padding-left: 1.2rem; border-left: 1px dashed var(--border); }
+  .tree-level-header { color: var(--muted); font-size: .7rem; margin: .3rem 0 .2rem; }
+
+  /* GANTT */
+  .gantt-wrap { overflow-x: auto; }
+  .gantt-row { display: flex; align-items: center; margin-bottom: .4rem; }
+  .gantt-label { width: 80px; font-size: .75rem; color: var(--muted); font-family: var(--mono); flex-shrink: 0; }
+  .gantt-track { position: relative; height: 32px; flex: 1; background: #07070d; border-radius: 4px; overflow: visible; }
+  .gantt-bar {
+    position: absolute; height: 28px; top: 2px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .68rem; font-family: var(--mono); font-weight: 700;
+    transition: all .4s; opacity: 0; transform: scaleX(0); transform-origin: left;
+  }
+  .gantt-bar.show { opacity: 1; transform: scaleX(1); }
+  .gantt-colors { --c0: #7c3aed; --c1: #06b6d4; --c2: #f59e0b; --c3: #10b981; --c4: #ef4444; }
+
+  /* LOG */
+  #log { background: #07070d; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; height: 160px; overflow-y: auto; font-family: var(--mono); font-size: .75rem; line-height: 1.8; }
+  .log-line { padding: .05rem 0; }
+  .log-line.info { color: var(--accent2); }
+  .log-line.assign { color: var(--accent4); }
+  .log-line.divide { color: var(--accent3); }
+  .log-line.base   { color: var(--accent1); }
+  .log-line.recurse { color: #f9a8d4; }
+
+  /* COMPLEXITY TABLE */
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: .8rem; }
+  th, td { padding: .6rem 1rem; border: 1px solid var(--border); text-align: left; }
+  th { background: var(--surface); color: var(--accent2); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; }
+  tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+  td.good { color: var(--accent4); }
+  td.ok { color: var(--accent3); }
+  td.bad { color: var(--accent5); }
+
+  /* BADGE */
+  .badge {
+    display: inline-block; padding: .2rem .6rem; border-radius: 20px;
+    font-size: .7rem; font-family: var(--mono); font-weight: 700; letter-spacing: .05em;
+  }
+  .badge.optimal { background: rgba(16,185,129,.2); color: var(--accent4); border: 1px solid var(--accent4); }
+  .badge.heuristic { background: rgba(245,158,11,.2); color: var(--accent3); border: 1px solid var(--accent3); }
+  .badge.expo { background: rgba(239,68,68,.2); color: var(--accent5); border: 1px solid var(--accent5); }
+
+  /* PROGRESS */
+  .progress-bar {
+    height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin: .5rem 0;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    border-radius: 2px; transition: width .3s;
+  }
+
+  /* STEP COUNTER */
+  .step-counter { font-family: var(--mono); font-size: .8rem; color: var(--muted); }
+  .step-counter span { color: var(--accent2); font-weight: 700; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted); font-family: var(--mono); margin-bottom: .6rem;
+  }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 1.2rem 0; }
+
+  /* HELP TOOLTIP */
+  .tip {
+    display: inline-block; background: rgba(124,58,237,.2); border: 1px solid var(--accent1);
+    border-radius: 4px; padding: .15rem .5rem; font-size: .72rem; font-family: var(--mono);
+    color: #c084fc; margin-left: .4rem; cursor: help;
+  }
+  .big-o { font-family: var(--mono); font-weight: 700; font-size: 1rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Server Scheduling <span>— Visualizador Interactivo</span></h1>
+  <p>Análisis y Diseño de Algoritmos · Guía de Sustentación</p>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('dep')">0. Niveles de Dependencia</div>
+  <div class="tab" onclick="showTab('bf')">1. Fuerza Bruta</div>
+  <div class="tab" onclick="showTab('dc')">2. Divide y Vencerás</div>
+  <div class="tab" onclick="showTab('rec')">3. Recursivo Exhaustivo</div>
+  <div class="tab" onclick="showTab('cmp')">4. Comparativa</div>
+</div>
+
+<!-- ═══════════════════════════════ TAB 0: DEP LEVELS ═══════════════════════ -->
+<div id="tab-dep" class="panel active">
+  <div class="card">
+    <h2>¿Qué hace <code>calculate_dependency_levels</code>?</h2>
+    <p>Antes de correr cualquier algoritmo, necesitamos saber en qué <strong>orden</strong> se pueden ejecutar las tareas. Una tarea no puede empezar hasta que su predecesora termine. Esta función le asigna a cada tarea un <em>nivel</em> (0, 1, 2…) que indica cuántos pasos de dependencia hay antes de ella.</p>
+    <div class="highlight">
+      Nivel 0 → Sin predecesores. Se pueden iniciar de inmediato.<br>
+      Nivel 1 → Dependen de una tarea de nivel 0.<br>
+      Nivel 2 → Dependen de una tarea de nivel 1. Y así…
+    </div>
+    <p>Una vez asignados los niveles, <strong>se ordena toda la lista por nivel</strong>. Esto garantiza que cuando procesemos la tarea X, su predecesor ya fue procesado y su <code>finish_time</code> ya está calculado.</p>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <h2>El truco: Memoización + Recursión</h2>
+      <pre><span class="kw">def</span> <span class="fn">get_level</span>(task_id):
+    <span class="cm"># ¿Ya lo calculamos antes? Reutilizamos.</span>
+    <span class="kw">if</span> task_id <span class="kw">in</span> levels:
+        <span class="kw">return</span> levels[task_id]
+
+    task = task_dict[task_id]
+    pred_id = task.get(<span class="str">"predecessor_id"</span>)
+
+    <span class="kw">if</span> pred_id <span class="kw">is None</span>:
+        <span class="cm"># Sin predecesor → nivel 0</span>
+        levels[task_id] = <span class="num">0</span>
+    <span class="kw">else</span>:
+        <span class="cm"># nivel = nivel del predecesor + 1</span>
+        levels[task_id] = get_level(pred_id) + <span class="num">1</span>
+
+    <span class="kw">return</span> levels[task_id]</pre>
+      <p>La <strong>memoización</strong> es el diccionario <code>levels</code>. Si el nivel de una tarea ya fue calculado, no lo recalcula. Sin esto, podría calcular el mismo camino de dependencias miles de veces.</p>
+    </div>
+    <div class="card">
+      <h2>Simulación paso a paso</h2>
+      <p>Haz clic en <strong>Siguiente Paso</strong> para ver cómo se calcula el nivel de cada tarea con la cadena de dependencias.</p>
+      <div class="controls" style="margin-top:.8rem">
+        <button class="run" onclick="depReset()">↺ Reiniciar</button>
+        <button class="step" onclick="depStep()">→ Siguiente Paso</button>
+        <span class="step-counter">Paso <span id="dep-step-num">0</span> / <span id="dep-step-total">?</span></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="dep-progress" style="width:0%"></div></div>
+      <div id="dep-log" style="font-family:var(--mono);font-size:.78rem;min-height:80px;line-height:1.9"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Resultado: Lista ordenada por nivel</h2>
+    <p>Así queda la lista después de aplicar la función. Esta es la lista que reciben <strong>todos los algoritmos</strong>:</p>
+    <div id="dep-levels-display" class="dep-viz" style="margin-top:.8rem"></div>
+    <div class="highlight amber" style="margin-top:.8rem">
+      <strong>¿Por qué es crucial este orden?</strong> Garantiza que al procesar la tarea i, tasks[0..i-1] ya tienen <code>finish_time</code> calculado. Sin este orden, una tarea podría intentar leer <code>finish_time</code> de su predecesora que aún no fue procesada → resultado incorrecto.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ TAB 1: BRUTE FORCE ═══════════════════════ -->
+<div id="tab-bf" class="panel">
+  <div class="two-col">
+    <div class="card">
+      <h2>¿Qué es Fuerza Bruta? <span class="badge expo">Exponencial</span></h2>
+      <p>Imagina que tienes <strong>n tareas</strong> y <strong>m servidores</strong>. Fuerza bruta pregunta: <em>"¿Qué pasa si pongo la tarea 1 en el servidor A, la 2 en el B, la 3 en el A…?"</em> — y prueba <strong>absolutamente todas las combinaciones posibles</strong>.</p>
+      <div class="highlight red">
+        Total de combinaciones = m<sup>n</sup><br>
+        Con 3 servidores y 4 tareas = 3⁴ = <strong>81 combinaciones</strong><br>
+        Con 3 servidores y 10 tareas = 3¹⁰ = <strong>59,049 combinaciones</strong>
+      </div>
+      <p>Al final, elige la combinación que produjo el <strong>menor makespan</strong> (tiempo total de finalización).</p>
+    </div>
+    <div class="card">
+      <h2>Complejidad</h2>
+      <p class="big-o" style="color:var(--accent5);margin:.4rem 0">O(m<sup>n</sup> × n)</p>
+      <div class="highlight red">
+        m = servidores, n = tareas<br>
+        m<sup>n</sup> combinaciones posibles<br>
+        × n para evaluar cada una
+      </div>
+      <p>✅ <strong>Garantiza la solución óptima</strong> — revisa todo.<br>
+      ❌ <strong>Impráctico</strong> para n > 15.</p>
+      <hr class="divider">
+      <p class="section-title">Herramienta clave</p>
+      <p><code>itertools.product(range(m), repeat=n)</code> genera todas las tuplas. Ejemplo para m=2, n=3:<br>
+      <code>(0,0,0) (0,0,1) (0,1,0) (0,1,1) (1,0,0) (1,0,1) (1,1,0) (1,1,1)</code></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Simulación Interactiva — Fuerza Bruta</h2>
+    <p>Observa cómo se prueban <strong>todas las combinaciones</strong>. Cada fila es un intento diferente. Se resalta la combinación ganadora.</p>
+    <div class="controls" style="margin-top:.8rem">
+      <label>Tareas: <strong id="bf-n-val">4</strong></label>
+      <input type="range" min="2" max="5" value="4" oninput="document.getElementById('bf-n-val').textContent=this.value;bfSetup(+this.value,+document.getElementById('bf-m').value)" id="bf-n">
+      <label>Servidores: <strong id="bf-m-val">2</strong></label>
+      <input type="range" min="2" max="3" value="2" oninput="document.getElementById('bf-m-val').textContent=this.value;bfSetup(+document.getElementById('bf-n').value,+this.value)" id="bf-m">
+      <button class="run" onclick="bfRun()">▶ Ejecutar Todo</button>
+      <button class="step" onclick="bfStep()">→ Paso a Paso</button>
+      <button onclick="bfReset()">↺ Reiniciar</button>
+    </div>
+    <div class="step-counter">Combinación <span id="bf-current">0</span> / <span id="bf-total">0</span> · Mejor makespan: <span id="bf-best" style="color:var(--accent4)">—</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="bf-progress" style="width:0%"></div></div>
+    <div id="bf-grid" style="margin-top:.8rem;overflow:auto;max-height:320px;font-family:var(--mono);font-size:.75rem"></div>
+  </div>
+
+  <div class="card">
+    <h2>Función <code>simulate(assignment)</code> — el corazón</h2>
+    <pre><span class="kw">def</span> <span class="fn">simulate</span>(assignment):
+    <span class="cm"># 1. Limpiar todos los servidores</span>
+    <span class="kw">for</span> s <span class="kw">in</span> servers: s.clear()
+    <span class="kw">for</span> t <span class="kw">in</span> tasks: t.start_time = t.finish_time = <span class="num">0.0</span>
+
+    <span class="cm"># 2. Asignar cada tarea respetando dependencias</span>
+    <span class="kw">for</span> i, task <span class="kw">in</span> enumerate(tasks):
+        server = servers[assignment[i]]  <span class="cm"># ← servidor elegido</span>
+
+        pred_finish = <span class="num">0.0</span>
+        <span class="kw">if</span> task.predecessor_id:
+            pred_finish = task_dict[task.predecessor_id].finish_time
+
+        <span class="cm"># inicio = max(cuándo está libre el servidor, cuándo termina el pred.)</span>
+        start = max(server.total_load, pred_finish)
+        server.add_task(task, start_time=start)
+
+    <span class="cm"># 3. Makespan = carga del servidor más ocupado</span>
+    <span class="kw">return</span> max(s.total_load <span class="kw">for</span> s <span class="kw">in</span> servers)</pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ TAB 2: DIVIDE & CONQUER ═══════════════════ -->
+<div id="tab-dc" class="panel">
+  <div class="two-col">
+    <div class="card">
+      <h2>¿Qué es Divide y Vencerás? <span class="badge heuristic">O(n log n)</span></h2>
+      <p>En vez de probar todo, este algoritmo <strong>divide la lista de tareas por la mitad</strong> repetidamente y las asigna en ese orden.</p>
+      <div class="highlight cyan">
+        <strong>DIVIDIR:</strong> Lista de tareas → mitad izquierda + mitad derecha<br>
+        <strong>CONQUISTAR:</strong> Resolver cada mitad recursivamente<br>
+        <strong>COMBINAR:</strong> Implícito — ambas mitades comparten los mismos servidores
+      </div>
+      <p>La clave es que las tareas ya están <strong>ordenadas por dependency_level</strong>. Entonces la mitad izquierda siempre contiene predecesores antes que sus dependientes.</p>
+    </div>
+    <div class="card">
+      <h2>Complejidad</h2>
+      <p class="big-o" style="color:var(--accent2);margin:.4rem 0">O(n log n)</p>
+      <div class="highlight cyan">
+        log n niveles de recursión<br>
+        n trabajo total por nivel<br>
+        → T(n) = 2T(n/2) + O(n) <em>(Teorema Maestro)</em>
+      </div>
+      <p>✅ Mucho más rápido que fuerza bruta.<br>
+      ⚠️ <strong>No garantiza óptimo</strong> — es una heurística eficiente.</p>
+      <hr class="divider">
+      <p class="section-title">Optimización por prioridad</p>
+      <p>Dentro del mismo nivel, las tareas de mayor prioridad se asignan primero → ocupan servidores más libres → menor tiempo de espera.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Árbol Recursivo — Visualización Interactiva</h2>
+    <p>Observa cómo la lista se divide en mitades sucesivas hasta llegar al caso base (1 tarea).</p>
+    <div class="controls" style="margin-top:.8rem">
+      <select id="dc-tasks-select" onchange="dcSetup()">
+        <option value="6">6 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+      </select>
+      <button class="run" onclick="dcRunAll()">▶ Ejecutar Todo</button>
+      <button class="step" onclick="dcStep()">→ Siguiente Paso</button>
+      <button onclick="dcReset()">↺ Reiniciar</button>
+      <span class="step-counter">Paso <span id="dc-step-num">0</span> · <span id="dc-phase" style="color:var(--accent2)">Listo</span></span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="dc-progress" style="width:0%"></div></div>
+    <div id="tree-container"></div>
+    <hr class="divider">
+    <div class="section-title">Log de ejecución</div>
+    <div id="log"></div>
+  </div>
+
+  <div class="card">
+    <h2>Gantt Chart — Asignación Final</h2>
+    <p>Así quedan distribuidas las tareas entre los servidores:</p>
+    <div id="dc-gantt" class="gantt-wrap" style="margin-top:.8rem"></div>
+  </div>
+
+  <div class="card">
+    <h2>Código Clave</h2>
+    <pre><span class="kw">def</span> <span class="fn">_schedule</span>(task_list):
+    <span class="kw">if not</span> task_list: <span class="kw">return</span>          <span class="cm"># Caso base 1: vacío</span>
+
+    <span class="kw">if</span> len(task_list) == <span class="num">1</span>:               <span class="cm"># Caso base 2: una tarea</span>
+        task = task_list[<span class="num">0</span>]
+        server = min(servers,
+            key=<span class="kw">lambda</span> s: (max(s.total_load, pred_finish),
+                            s.total_load))
+        start_time = max(server.total_load, pred_finish)
+        server.add_task(task, start_time=start_time)
+        <span class="kw">return</span>
+
+    mid = len(task_list) // <span class="num">2</span>           <span class="cm"># DIVIDIR</span>
+    _schedule(task_list[:mid])           <span class="cm"># CONQUISTAR izquierda</span>
+    _schedule(task_list[mid:])           <span class="cm"># CONQUISTAR derecha</span>
+    <span class="cm"># COMBINAR: implícito (servidores compartidos)</span></pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ TAB 3: RECURSIVE ═════════════════════════ -->
+<div id="tab-rec" class="panel">
+  <div class="two-col">
+    <div class="card">
+      <h2>Recursivo Exhaustivo <span class="badge expo">O(m<sup>n</sup>)</span></h2>
+      <p>Similar a Fuerza Bruta en resultado, pero la enumeración es <strong>recursiva</strong> en vez de iterativa. Para cada tarea, prueba cada servidor, recurre para las tareas restantes, y deshace la asignación (<em>backtrack</em> implícito).</p>
+      <div class="highlight">
+        <strong>Diferencia con Fuerza Bruta:</strong> En lugar de generar todas las combinaciones de golpe con <code>itertools.product</code>, las va construyendo una por una mediante la pila de recursión.<br><br>
+        <strong>Diferencia con Backtracking:</strong> No aplica ninguna poda — explora absolutamente todas las ramas.
+      </div>
+    </div>
+    <div class="card">
+      <h2>La función <code>solve(idx)</code></h2>
+      <pre><span class="kw">def</span> <span class="fn">solve</span>(idx):
+    <span class="kw">if</span> idx == n:          <span class="cm"># Caso base</span>
+        makespan = max(s.total_load <span class="kw">for</span> s <span class="kw">in</span> servers)
+        <span class="kw">return</span> (makespan, [])
+
+    <span class="kw">for</span> j <span class="kw">in</span> range(m):    <span class="cm"># Probar cada servidor</span>
+        server.add_task(task, ...)      <span class="cm"># Asignar</span>
+        sub_ms, sub_assign = solve(idx+<span class="num">1</span>)  <span class="cm"># Recurrir</span>
+        server.remove_task(task)        <span class="cm"># DESHACER</span>
+
+        <span class="kw">if</span> sub_ms < best_makespan:
+            best_makespan = sub_ms
+            best_server = j
+
+    <span class="kw">return</span> (best_makespan, [best_server] + sub_assign)</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Árbol de Decisión Recursivo</h2>
+    <p>Cada nodo = "asignar tarea i al servidor j". El árbol tiene profundidad n y factor de ramificación m.</p>
+    <div class="controls" style="margin-top:.8rem">
+      <label>Tareas (n): <strong id="rec-n-val">3</strong></label>
+      <input type="range" min="2" max="4" value="3" oninput="document.getElementById('rec-n-val').textContent=this.value;recSetup(+this.value,+document.getElementById('rec-m').value)" id="rec-n">
+      <label>Servidores (m): <strong id="rec-m-val">2</strong></label>
+      <input type="range" min="2" max="3" value="2" oninput="document.getElementById('rec-m-val').textContent=this.value;recSetup(+document.getElementById('rec-n').value,+this.value)" id="rec-m">
+      <button class="run" onclick="recRunAll()">▶ Ejecutar Todo</button>
+      <button class="step" onclick="recStep()">→ Paso a Paso</button>
+      <button onclick="recReset()">↺ Reiniciar</button>
+    </div>
+    <div class="step-counter" style="margin:.5rem 0">Nodos explorados: <span id="rec-nodes" style="color:var(--accent2)">0</span> / <span id="rec-total-nodes">0</span> · Mejor: <span id="rec-best" style="color:var(--accent4)">—</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="rec-progress" style="width:0%"></div></div>
+    <div id="rec-tree" style="overflow:auto;background:#07070d;border:1px solid var(--border);border-radius:10px;padding:1rem;min-height:200px;font-family:var(--mono);font-size:.75rem"></div>
+  </div>
+
+  <div class="card">
+    <h2>¿Por qué necesita reconstruir al final?</h2>
+    <p>Durante la ejecución de <code>solve()</code>, se hacen y <strong>deshacen</strong> miles de asignaciones (<code>add_task</code> / <code>remove_task</code>). Al terminar, los servidores están vacíos. Por eso hay una fase de reconstrucción al final usando el vector <code>best_assignment</code>.</p>
+    <div class="highlight green">
+      Fase 1 → solve() encuentra el vector óptimo [j₀, j₁, j₂…]<br>
+      Fase 2 → Se limpian los servidores<br>
+      Fase 3 → Se reasignan las tareas usando ese vector encontrado
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ TAB 4: COMPARATIVA ═══════════════════════ -->
+<div id="tab-cmp" class="panel">
+  <div class="card">
+    <h2>Comparativa de los 4 Algoritmos</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Algoritmo</th>
+          <th>Tiempo</th>
+          <th>Espacio</th>
+          <th>Óptimo</th>
+          <th>Técnica</th>
+          <th>Escala</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>dep_levels</strong></td>
+          <td class="good">O(n)</td>
+          <td class="good">O(n)</td>
+          <td class="good">✓ (orden)</td>
+          <td>Recursión + Memo</td>
+          <td class="good">Excelente</td>
+        </tr>
+        <tr>
+          <td><strong>Fuerza Bruta</strong></td>
+          <td class="bad">O(mⁿ·n)</td>
+          <td class="good">O(n)</td>
+          <td class="good">✓ Siempre</td>
+          <td>Enumeración iterativa</td>
+          <td class="bad">n &lt; 15</td>
+        </tr>
+        <tr>
+          <td><strong>Divide y Vencerás</strong></td>
+          <td class="good">O(n log n)</td>
+          <td class="ok">O(n log n)</td>
+          <td class="ok">✗ Heurístico</td>
+          <td>Recursión D&C</td>
+          <td class="good">Excelente</td>
+        </tr>
+        <tr>
+          <td><strong>Recursivo Exhaustivo</strong></td>
+          <td class="bad">O(mⁿ)</td>
+          <td class="good">O(n)</td>
+          <td class="good">✓ Siempre</td>
+          <td>Recursión + backtrack</td>
+          <td class="bad">n &lt; 15</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <h2>Fuerza Bruta vs Recursivo</h2>
+      <p>Ambos son <strong>exponenciales</strong> y garantizan el óptimo. La diferencia es cómo enumeran:</p>
+      <div class="highlight red">
+        <strong>Fuerza Bruta:</strong> Usa <code>itertools.product</code> — genera TODA la lista de combinaciones en memoria primero, luego las evalúa una por una.<br><br>
+        <strong>Recursivo:</strong> Construye las combinaciones usando la <em>pila de llamadas</em>. En cada nivel decide un servidor, recurre, y deshace. Nunca materializa todas las combinaciones en memoria.
+      </div>
+    </div>
+    <div class="card">
+      <h2>D&C vs los Exhaustivos</h2>
+      <p>Divide y Vencerás cambia el objetivo: en vez de buscar el óptimo global, busca una <strong>solución buena rápidamente</strong>.</p>
+      <div class="highlight cyan">
+        El "truco" es que el orden por <code>dependency_level</code> ya garantiza que los predecesores siempre caen en la mitad izquierda. Entonces dividir es seguro: no se rompen dependencias.<br><br>
+        La "combinación implícita" es el momento más confuso: no hay merge() porque ambas mitades modifican los <em>mismos objetos</em> Server — no copias.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Crecimiento del número de combinaciones</h2>
+    <p>m=2 servidores. Observa cómo explota m<sup>n</sup> vs n·log(n):</p>
+    <div id="growth-chart" style="overflow-x:auto;margin-top:.8rem"></div>
+  </div>
+
+  <div class="card">
+    <h2>Preguntas frecuentes del profesor</h2>
+    <div class="highlight">
+      <strong>P: ¿Por qué D&C no garantiza óptimo?</strong><br>
+      R: Porque asigna las tareas en el orden en que la división las presenta, sin comparar contra otras asignaciones posibles. Es una decisión greedy en el caso base: elige el servidor con menos carga sin considerar el futuro.
+    </div>
+    <div class="highlight cyan" style="margin-top:.6rem">
+      <strong>P: ¿Qué es el makespan?</strong><br>
+      R: El tiempo en que termina la ÚLTIMA tarea de TODOS los servidores. Es <code>max(server.total_load for server in servers)</code>. Minimizar el makespan = distribuir trabajo lo más equitativamente posible.
+    </div>
+    <div class="highlight amber" style="margin-top:.6rem">
+      <strong>P: ¿Por qué se ordena por prioridad descendente dentro del mismo nivel?</strong><br>
+      R: Las tareas de mayor prioridad deben terminar pronto. Al asignarlas primero, cuando los servidores están más vacíos, obtienen tiempos de inicio más bajos. Las tareas de baja prioridad se asignan después, cuando los servidores ya tienen carga.
+    </div>
+    <div class="highlight green" style="margin-top:.6rem">
+      <strong>P: ¿Cuál es la diferencia entre Recursivo y Backtracking?</strong><br>
+      R: Backtracking añade condiciones de poda — si en un punto ya sé que no puedo mejorar la mejor solución conocida, paro esa rama. El Recursivo Exhaustivo NO poda, explora todo.
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════ DATOS DEMO ═══════════════════
+const DEMO_TASKS = [
+  {id:'T1', dur:3, priority:3, predecessor_id:null},
+  {id:'T2', dur:2, priority:2, predecessor_id:null},
+  {id:'T3', dur:4, priority:1, predecessor_id:'T1'},
+  {id:'T4', dur:1, priority:3, predecessor_id:'T2'},
+  {id:'T5', dur:2, priority:2, predecessor_id:'T3'},
+  {id:'T6', dur:3, priority:1, predecessor_id:'T4'},
+  {id:'T7', dur:1, priority:3, predecessor_id:'T5'},
+  {id:'T8', dur:2, priority:2, predecessor_id:'T6'},
+];
+
+// ═══════════════════ TABS ═══════════════════
+function showTab(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ═══════════════════ TAB 0: DEP LEVELS ═══════════════════
+const depTasks = JSON.parse(JSON.stringify(DEMO_TASKS));
+let depStepIdx = 0;
+const depSteps = [];
+
+function buildDepSteps(){
+  depSteps.length = 0;
+  const dict = {};
+  depTasks.forEach(t=>dict[t.id]=t);
+  const levels = {};
+  const trace = [];
+  function getLevel(id, depth=0){
+    if(id in levels){ trace.push({id, level:levels[id], memo:true, depth}); return levels[id]; }
+    const t = dict[id];
+    trace.push({id, exploring:true, depth});
+    if(!t.predecessor_id){ levels[id]=0; trace.push({id, level:0, depth}); return 0; }
+    const pl = getLevel(t.predecessor_id, depth+1);
+    levels[id] = pl+1;
+    trace.push({id, level:pl+1, depth});
+    return pl+1;
+  }
+  depTasks.forEach(t=>getLevel(t.id));
+  depTasks.forEach(t=>t.dep_level = levels[t.id]);
+  trace.forEach(s=>depSteps.push(s));
+  document.getElementById('dep-step-total').textContent = depSteps.length;
+}
+
+function depReset(){
+  depStepIdx=0;
+  buildDepSteps();
+  document.getElementById('dep-log').innerHTML='<span style="color:var(--muted)">Haz clic en "Siguiente Paso"…</span>';
+  document.getElementById('dep-step-num').textContent='0';
+  document.getElementById('dep-progress').style.width='0%';
+  renderDepLevels();
+}
+
+function depStep(){
+  if(depStepIdx>=depSteps.length) return;
+  const s = depSteps[depStepIdx];
+  const el = document.getElementById('dep-log');
+  const indent = '  '.repeat(s.depth||0);
+  let line='';
+  if(s.memo) line=`<span style="color:var(--accent3)">${indent}📋 ${s.id}: nivel ya en caché → ${s.level}</span>`;
+  else if(s.exploring) line=`<span style="color:var(--accent2)">${indent}🔍 Calculando nivel de ${s.id}…</span>`;
+  else line=`<span style="color:var(--accent4)">${indent}✅ ${s.id}: nivel = ${s.level}</span>`;
+  el.innerHTML += line+'<br>';
+  el.scrollTop=el.scrollHeight;
+  depStepIdx++;
+  document.getElementById('dep-step-num').textContent=depStepIdx;
+  document.getElementById('dep-progress').style.width=(depStepIdx/depSteps.length*100)+'%';
+  renderDepLevels();
+}
+
+function renderDepLevels(){
+  const byLevel = {};
+  depTasks.forEach(t=>{
+    const l = t.dep_level !== undefined ? t.dep_level : '?';
+    if(!byLevel[l]) byLevel[l]=[];
+    byLevel[l].push(t);
+  });
+  let html='';
+  Object.keys(byLevel).sort().forEach(l=>{
+    html+=`<div class="dep-level"><div class="dep-level-label">Nivel ${l}</div>`;
+    byLevel[l].forEach((t,i)=>{
+      html+=`<div class="task-chip l${l%4}">${t.id} <span style="opacity:.6">dur:${t.dur} pri:${t.priority}</span></div>`;
+      if(t.predecessor_id) html+=`<span class="arrow">← ${t.predecessor_id}</span>`;
+    });
+    html+='</div>';
+  });
+  document.getElementById('dep-levels-display').innerHTML = html;
+}
+
+// ═══════════════════ TAB 1: BRUTE FORCE ═══════════════════
+let bfN=4, bfM=2, bfCombos=[], bfIdx=0, bfBest=Infinity, bfBestIdx=-1;
+let bfInterval=null;
+
+function bfMakeTasks(n){
+  return DEMO_TASKS.slice(0,n).map(t=>({...t,dep_level:0,start_time:0,finish_time:0}));
+}
+
+function bfSimulate(assignment, tasks, m){
+  const servers = Array.from({length:m},(_,i)=>({id:i,load:0}));
+  const dict = {};
+  tasks.forEach(t=>{ dict[t.id]=t; t.start_time=0; t.finish_time=0; });
+  for(let i=0;i<tasks.length;i++){
+    const t=tasks[i]; const sv=servers[assignment[i]];
+    let pf=0; if(t.predecessor_id&&dict[t.predecessor_id]) pf=dict[t.predecessor_id].finish_time;
+    const start=Math.max(sv.load,pf);
+    t.start_time=start; t.finish_time=start+t.dur;
+    sv.load=t.finish_time;
+  }
+  return Math.max(...servers.map(s=>s.load));
+}
+
+function bfSetup(n,m){
+  bfN=n; bfM=m;
+  bfCombos=[]; bfIdx=0; bfBest=Infinity; bfBestIdx=-1;
+  function gen(curr){ if(curr.length===n){bfCombos.push([...curr]);return;} for(let j=0;j<m;j++){curr.push(j);gen(curr);curr.pop();} }
+  gen([]);
+  document.getElementById('bf-total').textContent=bfCombos.length;
+  document.getElementById('bf-current').textContent='0';
+  document.getElementById('bf-best').textContent='—';
+  document.getElementById('bf-progress').style.width='0%';
+  document.getElementById('bf-grid').innerHTML=`<span style="color:var(--muted)">Total combinaciones: ${bfCombos.length}. Usa los botones para explorar.</span>`;
+}
+
+function bfReset(){ clearInterval(bfInterval); bfSetup(bfN,bfM); }
+
+function bfStep(){
+  if(bfIdx>=bfCombos.length) return;
+  const tasks = bfMakeTasks(bfN);
+  const combo = bfCombos[bfIdx];
+  const ms = bfSimulate(combo,tasks,bfM);
+  const isNew = ms<bfBest;
+  if(isNew){ bfBest=ms; bfBestIdx=bfIdx; document.getElementById('bf-best').textContent=bfBest.toFixed(1); }
+  bfIdx++;
+  document.getElementById('bf-current').textContent=bfIdx;
+  document.getElementById('bf-progress').style.width=(bfIdx/bfCombos.length*100)+'%';
+  renderBfGrid();
+}
+
+function bfRun(){
+  clearInterval(bfInterval);
+  bfInterval = setInterval(()=>{ bfStep(); if(bfIdx>=bfCombos.length) clearInterval(bfInterval); }, 60);
+}
+
+function renderBfGrid(){
+  const tasks = bfMakeTasks(bfN);
+  const cols = ['Combo #', ...tasks.map(t=>t.id), 'Makespan', ''];
+  let html=`<table style="font-family:var(--mono);font-size:.72rem;border-collapse:collapse;min-width:100%">`;
+  html+=`<tr>${cols.map(c=>`<th style="padding:.3rem .6rem;border:1px solid var(--border);background:var(--surface);color:var(--accent2)">${c}</th>`).join('')}</tr>`;
+  const show = bfCombos.slice(0,bfIdx);
+  show.slice(-20).forEach((combo,ri)=>{
+    const idx = Math.max(0,bfIdx-20)+ri;
+    const ms = bfSimulate(combo,bfMakeTasks(bfN),bfM);
+    const isBest = idx===bfBestIdx;
+    const bg = isBest?'rgba(16,185,129,.12)':'transparent';
+    html+=`<tr style="background:${bg}">`;
+    html+=`<td style="padding:.25rem .6rem;border:1px solid var(--border);color:var(--muted)">${idx+1}</td>`;
+    combo.forEach(j=>{
+      html+=`<td style="padding:.25rem .6rem;border:1px solid var(--border);color:var(--accent${j+1})">S${j+1}</td>`;
+    });
+    html+=`<td style="padding:.25rem .6rem;border:1px solid var(--border);color:${isBest?'var(--accent4)':'var(--text)'}">${ms.toFixed(1)}</td>`;
+    html+=`<td style="padding:.25rem .6rem;border:1px solid var(--border)">${isBest?'⭐ Mejor':''}</td>`;
+    html+='</tr>';
+  });
+  html+='</table>';
+  document.getElementById('bf-grid').innerHTML=html;
+}
+
+// ═══════════════════ TAB 2: DIVIDE & CONQUER ═══════════════════
+let dcSteps=[], dcIdx=0, dcTasks=[], dcServers=[];
+
+function dcSetup(){
+  const n = +document.getElementById('dc-tasks-select').value;
+  dcTasks = DEMO_TASKS.slice(0,n).map((t,i)=>({...t, dep_level: Math.floor(i/2), start_time:0, finish_time:0}));
+  // Assign proper dep levels
+  const dict={}; dcTasks.forEach(t=>dict[t.id]=t);
+  function gl(id){ const t=dict[id]; if(!t.predecessor_id)return 0; return gl(t.predecessor_id)+1; }
+  dcTasks.forEach(t=>t.dep_level=gl(t.id));
+  dcTasks.sort((a,b)=>a.dep_level-b.dep_level || b.priority-a.priority);
+  dcServers = [{id:'S1',load:0,tasks:[]},{id:'S2',load:0,tasks:[]}];
+  dcSteps=[]; dcIdx=0;
+  buildDcSteps(dcTasks, dcServers);
+  document.getElementById('dc-step-num').textContent='0';
+  document.getElementById('dc-phase').textContent='Listo';
+  document.getElementById('dc-progress').style.width='0%';
+  document.getElementById('log').innerHTML='<span style="color:var(--muted)">Haz clic en Siguiente Paso…</span>';
+  renderDcTree();
+  renderDcGantt();
+}
+
+function buildDcSteps(tasks, servers){
+  const dict={}; tasks.forEach(t=>dict[t.id]=t);
+  // Clone servers for simulation
+  const sv = [{id:'S1',load:0,tasks:[]},{id:'S2',load:0,tasks:[]}];
+  function schedule(tl, depth){
+    if(!tl.length) return;
+    if(tl.length===1){
+      const task=tl[0];
+      let pf=0; if(task.predecessor_id&&dict[task.predecessor_id]) pf=dict[task.predecessor_id].finish_time;
+      const s=sv.reduce((a,b)=>Math.max(a.load,pf)<=Math.max(b.load,pf)?a:b);
+      const start=Math.max(s.load,pf);
+      task.start_time=start; task.finish_time=start+task.dur;
+      s.load=task.finish_time; s.tasks.push(task.id);
+      dcSteps.push({type:'base',task:task.id,server:s.id,start,end:task.finish_time,depth,list:tl.map(x=>x.id)});
+      return;
+    }
+    const mid=Math.floor(tl.length/2);
+    dcSteps.push({type:'divide',left:tl.slice(0,mid).map(x=>x.id),right:tl.slice(mid).map(x=>x.id),depth,list:tl.map(x=>x.id)});
+    schedule(tl.slice(0,mid),depth+1);
+    schedule(tl.slice(mid),depth+1);
+  }
+  schedule(tasks,0);
+}
+
+function dcReset(){ dcSetup(); }
+
+function dcStep(){
+  if(dcIdx>=dcSteps.length){ document.getElementById('dc-phase').textContent='✅ Completado'; renderDcGantt(); return; }
+  const s=dcSteps[dcIdx];
+  const logEl=document.getElementById('log');
+  let line='';
+  if(s.type==='divide'){
+    line=`<div class="log-line divide">DIVIDIR [${s.list.join(',')}] → izq:[${s.left.join(',')}] | der:[${s.right.join(',')}]</div>`;
+    document.getElementById('dc-phase').textContent='DIVIDIR';
+  } else {
+    line=`<div class="log-line base">ASIGNAR ${s.task} → ${s.server} [${s.start.toFixed(1)}–${s.end.toFixed(1)}]</div>`;
+    document.getElementById('dc-phase').textContent='CASO BASE';
+  }
+  if(logEl.querySelector('.log-line')===null) logEl.innerHTML='';
+  logEl.innerHTML+=line; logEl.scrollTop=logEl.scrollHeight;
+  dcIdx++;
+  document.getElementById('dc-step-num').textContent=dcIdx;
+  document.getElementById('dc-progress').style.width=(dcIdx/dcSteps.length*100)+'%';
+  renderDcTree();
+  renderDcGantt();
+}
+
+function dcRunAll(){ const iv=setInterval(()=>{ dcStep(); if(dcIdx>=dcSteps.length) clearInterval(iv); },200); }
+
+function renderDcTree(){
+  const container=document.getElementById('tree-container');
+  const processed=new Set();
+  for(let i=0;i<dcIdx;i++){
+    const s=dcSteps[i];
+    if(s.type==='base') processed.add(s.task);
+  }
+  const allLists=[];
+  dcSteps.forEach((s,i)=>{
+    if(s.type==='divide') allLists.push({i,s});
+    else allLists.push({i,s});
+  });
+  // Build simple tree view
+  let html='';
+  const byDepth={}; dcSteps.forEach(s=>{ const d=s.depth||0; if(!byDepth[d])byDepth[d]=[]; byDepth[d].push(s); });
+  const depths=Object.keys(byDepth).sort((a,b)=>a-b);
+  depths.forEach(d=>{
+    html+=`<div style="margin-bottom:.5rem"><span style="color:var(--muted);font-size:.7rem">Profundidad ${d}:</span><br>`;
+    byDepth[d].forEach((s,i)=>{
+      const stepI=dcSteps.indexOf(s);
+      const isDone=stepI<dcIdx;
+      const isActive=stepI===dcIdx-1;
+      if(s.type==='divide'){
+        const cls=isActive?'active':isDone?'done':'pending';
+        html+=`<span class="tree-node ${cls}">÷ [${s.list.join(',')}]</span>`;
+      } else {
+        const cls=isActive?'active':isDone?'base':'pending';
+        html+=`<span class="tree-node ${cls}">${s.task}→${isDone?s.server:'?'}</span>`;
+      }
+    });
+    html+='</div>';
+  });
+  container.innerHTML=html;
+}
+
+function renderDcGantt(){
+  const container=document.getElementById('dc-gantt');
+  const tDone=dcSteps.filter((s,i)=>i<dcIdx&&s.type==='base');
+  if(!tDone.length){ container.innerHTML='<span style="color:var(--muted);font-family:var(--mono);font-size:.8rem">Ejecuta el algoritmo para ver el Gantt…</span>'; return; }
+  const maxTime=Math.max(...tDone.map(s=>s.end),1);
+  const byServer={};
+  tDone.forEach(s=>{ if(!byServer[s.server])byServer[s.server]=[]; byServer[s.server].push(s); });
+  const colors=['#7c3aed','#06b6d4','#f59e0b','#10b981','#ef4444'];
+  let html='';
+  Object.keys(byServer).sort().forEach(sv=>{
+    html+=`<div class="gantt-row"><div class="gantt-label">${sv}</div><div class="gantt-track" style="position:relative;height:32px;flex:1;background:#07070d;border-radius:4px">`;
+    byServer[sv].forEach((s,i)=>{
+      const left=(s.start/maxTime*100).toFixed(1);
+      const width=((s.end-s.start)/maxTime*100).toFixed(1);
+      const col=colors[i%colors.length];
+      html+=`<div style="position:absolute;left:${left}%;width:${width}%;height:28px;top:2px;background:${col}33;border:1px solid ${col};border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.65rem;color:${col};font-weight:700">${s.task}</div>`;
+    });
+    html+='</div></div>';
+  });
+  container.innerHTML=html;
+}
+
+// ═══════════════════ TAB 3: RECURSIVE ═══════════════════
+let recN=3, recM=2, recNodes=[], recIdx=0;
+
+function recSetup(n,m){
+  recN=n; recM=m; recNodes=[]; recIdx=0;
+  // Build all decision tree nodes
+  function build(depth, path, taskLabels){
+    if(depth===n){ recNodes.push({type:'leaf',path:[...path],makespan:path.reduce((a,b)=>a+b,0)%5+1}); return; }
+    for(let j=0;j<m;j++){
+      recNodes.push({type:'node',depth,server:j,path:[...path,j],taskLabel:'T'+(depth+1)});
+      build(depth+1,[...path,j],taskLabels);
+    }
+  }
+  build(0,[],[]);
+  const totalLeaves=Math.pow(m,n);
+  document.getElementById('rec-total-nodes').textContent=recNodes.length;
+  document.getElementById('rec-nodes').textContent='0';
+  document.getElementById('rec-best').textContent='—';
+  document.getElementById('rec-progress').style.width='0%';
+  renderRecTree();
+}
+
+function recReset(){ recSetup(recN,recM); }
+
+function recStep(){
+  if(recIdx>=recNodes.length) return;
+  const node=recNodes[recIdx];
+  recIdx++;
+  document.getElementById('rec-nodes').textContent=recIdx;
+  document.getElementById('rec-progress').style.width=(recIdx/recNodes.length*100)+'%';
+  if(node.type==='leaf'){
+    const ms=node.makespan;
+    const cur=document.getElementById('rec-best').textContent;
+    if(cur==='—'||ms<+cur) document.getElementById('rec-best').textContent=ms;
+  }
+  renderRecTree();
+}
+
+function recRunAll(){ const iv=setInterval(()=>{ recStep(); if(recIdx>=recNodes.length) clearInterval(iv); },80); }
+
+function renderRecTree(){
+  const container=document.getElementById('rec-tree');
+  const colors=['#7c3aed','#06b6d4','#f59e0b','#10b981','#ef4444'];
+  const byDepth={};
+  recNodes.forEach((n,i)=>{ const d=n.depth!==undefined?n.depth:recN; if(!byDepth[d])byDepth[d]=[]; byDepth[d].push({n,i}); });
+  let html='';
+  Object.keys(byDepth).sort((a,b)=>+a-+b).forEach(d=>{
+    const label = +d===recN ? 'Hojas (makespan)' : `Tarea ${+d+1}`;
+    html+=`<div style="margin-bottom:.5rem"><span style="color:var(--muted);font-size:.68rem">${label}:</span><br style="margin:.1rem 0">`;
+    byDepth[d].forEach(({n,i})=>{
+      const isDone=i<recIdx;
+      const isActive=i===recIdx-1;
+      let cls=isDone?(n.type==='leaf'?'base':'done'):'pending';
+      if(isActive) cls='active';
+      if(n.type==='leaf'){
+        html+=`<span class="tree-node ${cls}" title="Asignaciones: [${n.path.map(j=>'S'+(j+1)).join(',')}]">ms=${n.makespan}</span>`;
+      } else {
+        const col=colors[n.server%colors.length];
+        html+=`<span class="tree-node ${cls}" style="${isDone?'border-color:'+col+';color:'+col:''}">T${n.depth+1}→S${n.server+1}</span>`;
+      }
+    });
+    html+='</div>';
+  });
+  container.innerHTML=html;
+}
+
+// ═══════════════════ GROWTH CHART ═══════════════════
+function renderGrowthChart(){
+  const ns=[2,3,4,5,6,7,8,9,10];
+  const m=2;
+  const maxBF=Math.pow(m,10);
+  let html=`<table style="font-family:var(--mono);font-size:.75rem;border-collapse:collapse;width:100%">`;
+  html+=`<tr><th style="padding:.4rem .8rem;border:1px solid var(--border);background:var(--surface)">n</th><th>m<sup>n</sup> (m=2)</th><th>n·log₂(n)</th><th>Ratio</th></tr>`;
+  ns.forEach(n=>{
+    const bf=Math.pow(m,n);
+    const dc=n*Math.log2(n);
+    const ratio=Math.round(bf/dc);
+    const pct=bf/maxBF*100;
+    html+=`<tr>
+      <td style="padding:.35rem .8rem;border:1px solid var(--border)">${n}</td>
+      <td style="border:1px solid var(--border);padding:.35rem .8rem">
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div style="width:${Math.min(pct,100)}px;height:12px;background:var(--accent5);border-radius:2px;min-width:4px"></div>
+          <span style="color:var(--accent5)">${bf.toLocaleString()}</span>
+        </div>
+      </td>
+      <td style="border:1px solid var(--border);padding:.35rem .8rem;color:var(--accent4)">${dc.toFixed(1)}</td>
+      <td style="border:1px solid var(--border);padding:.35rem .8rem;color:var(--muted)">${ratio}×</td>
+    </tr>`;
+  });
+  html+='</table>';
+  document.getElementById('growth-chart').innerHTML=html;
+}
+
+// ═══════════════════ INIT ═══════════════════
+buildDepSteps();
+renderDepLevels();
+bfSetup(4,2);
+dcSetup();
+recSetup(3,2);
+renderGrowthChart();
+</script>
+</body>
+</html>
