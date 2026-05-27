@@ -6,6 +6,9 @@
 
 Una plataforma web interactiva diseñada para visualizar, simular y comparar el rendimiento de diferentes algoritmos de asignación de servidores (Server Scheduling). Analiza las diferencias, tiempos de ejecución y *makespan* entre enfoques voraces (Greedy) y de búsqueda exhaustiva (Backtracking).
 
+
+
+
 ---
 
 ## Características Principales
@@ -19,6 +22,8 @@ Una plataforma web interactiva diseñada para visualizar, simular y comparar el 
 
 Explora la aplicación funcionando en vivo aquí:  
 [https://dazzling-elf-93cbf5.netlify.app/](https://dazzling-elf-93cbf5.netlify.app/)
+
+<img src="docs/qr_server.png" alt="QR Code Server Scheduling App" width="150">
 
 ## Tecnologías
 
